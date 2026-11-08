@@ -52,15 +52,15 @@ sudo apt install build-essential git
 Open a terminal and move to the directory where you want to keep the project.
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/MabelMoncy/network_lab_exam.git
 ```
 
-Replace `<REPOSITORY_URL>` with the actual Git repository URL.
+
 
 Move into the cloned repository:
 
 ```bash
-cd <REPOSITORY_FOLDER>
+cd network_lab_exam
 ```
 
 For example, if the cloned folder is named `network_lab_exam`:
