@@ -1,36 +1,34 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <arpa/inet.h>
 
 #define PORT 8080
 #define MAX 1024
 
-int main()
-{
-    int sockfd;
-    char message[MAX], buffer[MAX * 5];
+int main(){
+
+    int sock;
+    char message[MAX],buffer[MAX * 5];
 
     struct sockaddr_in server;
     socklen_t len = sizeof(server);
 
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    sock = socket(AF_INET,SOCK_DGRAM,0);
 
     server.sin_family = AF_INET;
     server.sin_port = htons(PORT);
-    inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
+    server.sin_addr.s_addr = INADDR_ANY;
 
-    printf("Enter sentence:\n");
-    fgets(message, MAX, stdin);
+    printf("Enter the message to be translate: ");
+    fgets(message,MAX,stdin);
 
-    sendto(sockfd, message, strlen(message) + 1, 0,
-           (struct sockaddr *)&server, len);
+    sendto(sock,message,strlen(message)+1,0,(struct sockaddr *)&server,len);
+    recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr *)&server,&len);
+    printf("The translated message is:  \n%s",buffer);
 
-    recvfrom(sockfd, buffer, sizeof(buffer), 0,
-             (struct sockaddr *)&server, &len);
-
-    printf("\nTranslated Sentence:\n%s\n", buffer);
-
-    close(sockfd);
+    close(sock);
     return 0;
+
 }
