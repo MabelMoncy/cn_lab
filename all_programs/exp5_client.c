@@ -14,17 +14,14 @@ int main()
     struct sockaddr_in server;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
-
     server.sin_family = AF_INET;
     server.sin_port = htons(PORT);
     inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
-
     connect(sock, (struct sockaddr *)&server, sizeof(server));
-
     printf("Enter order of matrix: ");
     scanf("%d", &n);
-
     srand(time(0));
+
     printf("\nGenerated Matrix:\n");
 
     for(int i = 0; i < n; i++)
@@ -38,11 +35,9 @@ int main()
     }
 
     write(sock, &n, sizeof(n));
-    write(sock, a, sizeof(a));
-
+    write(sock, a, n * n * sizeof(int));
     read(sock, result, sizeof(result));
     printf("\nMatrix Type Received from Server: %s\n", result);
-
     close(sock);
     return 0;
 }
