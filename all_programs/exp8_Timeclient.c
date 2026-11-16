@@ -5,15 +5,20 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 int main(void) {
-    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    int sock;
     char buffer[BUFFER_SIZE] = "TIME";
-    struct sockaddr_in server_addr = {0};
-    server_addr.sin_family = AF_INET; server_addr.sin_port = htons(PORT);
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
-    sendto(sockfd, buffer, strlen(buffer), 0,
-           (struct sockaddr *)&server_addr, sizeof(server_addr));
-    int length = recvfrom(sockfd, buffer, sizeof(buffer)-1, 0, NULL, NULL);
-    if (length > 0) { buffer[length] = '\0'; printf("Server Time: %s", buffer); }
-    close(sockfd);
+    struct sockaddr_in server;
+    socklen_t len = sizeof(server);
+
+    sock = socket(AF_INET,SOCK_DGRAM,0);
+
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    sendto(sock, buffer, strlen(buffer), 0,(struct sockaddr *)&server, sizeof(server));
+    recvfrom(sock,buffer,BUFFER_SIZE,0,(struct sockaddr *)&server,&len);
+    printf("Server Time is %s: ",buffer);
+    close(sock);
     return 0;
 }

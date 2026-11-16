@@ -6,22 +6,26 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 int main(void) {
-    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    int sock;
     char buffer[BUFFER_SIZE];
-    struct sockaddr_in server_addr = {0}, client_addr;
-    server_addr.sin_family = AF_INET; server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
-    if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("bind"); return 1;
-    }
-    printf("UDP Time Server Running...\n");
-    while (1) {
-        socklen_t address_length = sizeof(client_addr);
-        if (recvfrom(sockfd, buffer, sizeof(buffer), 0,
-                     (struct sockaddr *)&client_addr, &address_length) < 0) continue;
-        time_t current_time = time(NULL);
-        snprintf(buffer, sizeof(buffer), "%s", ctime(&current_time));
-        sendto(sockfd, buffer, strlen(buffer), 0,
-               (struct sockaddr *)&client_addr, address_length);
+    struct sockaddr_in server,client;
+    socklen_t len = sizeof(client);
+
+    sock = socket(AF_INET,SOCK_DGRAM,0);
+
+    server.sin_family = AF_INET;
+    server.sin_port = htons(PORT);
+    server.sin_addr.s_addr = INADDR_ANY;
+
+    bind(sock,(struct sockaddr *)&server,sizeof(server));
+    printf("\nUDP server running....");
+    while(1){
+        recvfrom(sock,buffer,BUFFER_SIZE,0,(struct sockaddr *)&client, &len);
+        time_t current_time;
+        time(&current_time);
+        strcpy(buffer,ctime(&current_time));
+        sendto(sock,buffer,strlen(buffer),0,(struct sockaddr *)&client,len);
+        close(sock);
+        return 0;
     }
 }
